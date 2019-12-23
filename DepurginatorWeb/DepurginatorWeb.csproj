@@ -132,6 +132,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\Depurginator - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\DepurginatorWeb2 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="outfile\depurginated_numbers.txt" />
     <Content Include="outfile\depurginated_numbers_reverse.txt" />

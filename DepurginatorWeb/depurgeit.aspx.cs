@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.IO;
 
 namespace DepurginatorWeb
@@ -38,8 +34,8 @@ namespace DepurginatorWeb
 
                 if (!File.Exists(Server.MapPath("~/infile/") + filename))     //".\\infile\\numbers_in.txt"))
                 {
-                    Console.WriteLine("\nNo numbers_in.txt file found in current directory.\n\n" +
-                        "Press Enter key to exit.\n");
+                   // Console.WriteLine("\nNo numbers_in.txt file found in current directory.\n\n" +
+                    //    "Press Enter key to exit.\n");
                     //int input = Console.Read();
                 }
 
