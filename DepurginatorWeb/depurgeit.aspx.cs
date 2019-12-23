@@ -13,13 +13,13 @@ namespace DepurginatorWeb
         string filename = "";
         protected void Page_Load(object sender, EventArgs e)
         {
-            LinkPanel.Visible = false;
+            if (Request.Params["showLinks"] == "True")
+                LinkPanel.Visible = true;
+
         }
 
         protected void DepurginateIt_Click(object sender, EventArgs e)
         {
-            LinkPanel.Visible = false;
-
             if (NumbersIn.HasFile)
             {
                 if (NumbersIn.PostedFile.ContentType == "text/plain")
@@ -235,8 +235,11 @@ namespace DepurginatorWeb
             //Console.WriteLine("Press Enter key to exit.");
             //int input5 = Console.Read();           
             LinkPanel.Visible = true;
-        }
-        
+
+            //Server.Transfer("~/depurgeit.aspx", true);
+            //Server.TransferRequest("~/depurgeit?showLinks=True");
+            Response.Redirect("~/depurgeit?showLinks=True");
+        }       
     }
     class Permutator
     {

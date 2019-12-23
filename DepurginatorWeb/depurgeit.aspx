@@ -10,7 +10,7 @@
     <form id="form1" runat="server">
         <asp:Label ID="InFile" runat="server" Text="Numbers File"></asp:Label>
         :<p>
-            <asp:FileUpload ID="NumbersIn" runat="server" style="margin-right: 369px" />
+            <asp:FileUpload ID="NumbersIn" runat="server" style="margin-right: 612px" Width="331px" />
         </p>
         <p>
             &nbsp;</p>
