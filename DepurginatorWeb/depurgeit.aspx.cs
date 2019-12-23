@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Web;
 
 namespace DepurginatorWeb
 {
@@ -11,6 +12,10 @@ namespace DepurginatorWeb
         {
             if (Request.Params["showLinks"] == "True")
                 LinkPanel.Visible = true;
+
+            string host = Request.Url.AbsoluteUri;
+
+            form1.Action = host + "?showLinks=True";
 
         }
 
@@ -234,7 +239,7 @@ namespace DepurginatorWeb
 
             //Server.Transfer("~/depurgeit.aspx", true);
             //Server.TransferRequest("~/depurgeit?showLinks=True");
-            Response.Redirect("~/depurgeit?showLinks=True");
+            //Response.Redirect("~/depurgeit?showLinks=True");
         }       
     }
     class Permutator
