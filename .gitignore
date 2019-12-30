@@ -259,3 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/DepurginatorWeb/outfile/depurginated_numbers_reverse_20191230171555.txt
+/DepurginatorWeb/outfile/depurginated_numbers_reverse_20191230171526.txt
+/DepurginatorWeb/outfile/depurginated_numbers_reverse_20191230170246.txt
+/DepurginatorWeb/outfile/depurginated_numbers_reverse_20191230170224.txt
+/DepurginatorWeb/outfile/depurginated_numbers_20191230171555.txt
+/DepurginatorWeb/outfile/depurginated_numbers_20191230171526.txt
+/DepurginatorWeb/outfile/depurginated_numbers_20191230170246.txt
+/DepurginatorWeb/outfile/depurginated_numbers_20191230170224.txt

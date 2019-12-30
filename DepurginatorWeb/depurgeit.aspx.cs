@@ -70,7 +70,7 @@ namespace DepurginatorWeb
                 List<double> resultList = new List<double>();
                 List<double> reverseResultList = new List<double>();
 
-                if (!ReadFile())
+                if (!ReadFile(numberList))
                     return;
 
                 permutator.Permutate(arr1, 0, 6, permutedList);
@@ -221,31 +221,7 @@ namespace DepurginatorWeb
                     //int input2 = Console.Read();
                 }
 
-                bool ReadFile()
-                {
-                    bool isGood = true;
-                    string dir = System.IO.Directory.GetCurrentDirectory();
-                    try
-                    {
-                    using (StreamReader reader = new StreamReader(Server.MapPath("~/infile/") + filename))    //dir + ".\\infile\\numbers_in.txt"))
-                    {
-                        string line;
-
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            numberList.Add(double.Parse(line));
-                        }
-                    }
-                    }
-                    catch (Exception)
-                    {
-                        //Console.WriteLine("Unable to read numbers_in.txt");
-                        //Console.WriteLine("Press Enter key to exit.");
-                        //int input4 = Console.Read();
-                        isGood = false;
-                    }
-                    return isGood;
-                }
+                
 
             //System.Threading.Thread.Sleep(1500);
             //Console.WriteLine("Numbers depurginated to depurginated_numbers.txt \nand reverse_depurginated_numbers.txt \n");
@@ -256,8 +232,35 @@ namespace DepurginatorWeb
             //Server.Transfer("~/depurgeit.aspx", true);
             //Server.TransferRequest("~/depurgeit?showLinks=True");
             //Response.Redirect("~/depurgeit?showLinks=True");
-        }       
+        }
+
+        public bool ReadFile(List<double> numberList)
+        {
+            bool isGood = true;
+            string dir = System.IO.Directory.GetCurrentDirectory();
+            try
+            {
+                using (StreamReader reader = new StreamReader(Server.MapPath("~/infile/") + filename))    //dir + ".\\infile\\numbers_in.txt"))
+                {
+                    string line;
+
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        numberList.Add(double.Parse(line));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Console.WriteLine("Unable to read numbers_in.txt");
+                //Console.WriteLine("Press Enter key to exit.");
+                //int input4 = Console.Read();
+                isGood = false;
+            }
+            return isGood;
+        }
     }
+
     class Permutator
     {
         public void Swap(ref int a, ref int b)
