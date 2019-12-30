@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
@@ -8,19 +8,33 @@ namespace DepurginatorWeb
     public partial class depurgeit : System.Web.UI.Page
     {
         string filename = "";
+        public string dateTimeStamp = ""; // DateTime.Now.ToString("yyyyMMddHHmmss");
+        public string outFile = ""; //"../outfile/depurginated_numbers_" + dateTimeStamp + ".txt";
+        public string outFileReverse = ""; // "../outfile/depurginated_numbers_reverse_" + dateTimeStamp + ".txt";
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Request.Params["showLinks"] == "True")
-                LinkPanel.Visible = true;
-
             string host = Request.Url.AbsoluteUri;
 
-            form1.Action = host + "?showLinks=True";
+            if (Request.Params["showLinks"] != "True")
+            {
+                //LinkPanel.Visible = true;
+                form1.Action = host + "?showLinks=True";
 
+            }
+            else
+            {
+                form1.Action = host;
+                dateTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                outFile = "~/outfile/depurginated_numbers_" + dateTimeStamp + ".txt";
+                outFileReverse = "~/outfile/depurginated_numbers_reverse_" + dateTimeStamp + ".txt";
+            }
+
+            DataBind();
         }
 
         protected void DepurginateIt_Click(object sender, EventArgs e)
         {
+
             if (NumbersIn.HasFile)
             {
                 if (NumbersIn.PostedFile.ContentType == "text/plain")
@@ -133,70 +147,72 @@ namespace DepurginatorWeb
 
                 try
                 {
-                using (StreamWriter outputFile = new StreamWriter(Server.MapPath("~/outfile/") + "depurginated_numbers_reverse.txt"))       //System.IO.Directory.GetCurrentDirectory() + ".\\outfile\\depurginated_numbers.txt"))
+                using (StreamWriter outputFile = new StreamWriter(Server.MapPath(outFile)))
+                {
+                    int x = 1;
+                    int y = 1;
+                    string outString = "";
+                    string oNumber = numberList[0].ToString();
+
+                    foreach (double line in resultList)
                     {
-                        int x = 1;
-                        int y = 1;
-                        string outString = "";
-                        string oNumber = numberList[0].ToString();
-
-                        foreach (double line in resultList)
+                        if (x % 5040 == 0 && y <= numberList.Count)
                         {
-                            if (x % 5040 == 0 && y <= numberList.Count)
-                            {
-                                oNumber = numberList[y - 1].ToString();
-                                y++;
-                            }
-
-                            if (x % 2 == 0)
-                            {
-                                outString += line.ToString();
-                                outputFile.WriteLine(outString);
-                            }
-                            else
-                            {
-                                outString = oNumber + "," + line.ToString() + ",";
-                            }
-                            x++;
+                            oNumber = numberList[y - 1].ToString();
+                            y++;
                         }
+
+                        if (x % 2 == 0)
+                        {
+                            outString += line.ToString();
+                            outputFile.WriteLine(outString);
+                        }
+                        else
+                        {
+                            outString = oNumber + "," + line.ToString() + ",";
+                        }
+                        x++;
                     }
                 }
-                catch (Exception)
+                }
+                catch (Exception ex)
                 {
-                    //Console.WriteLine("Unable to write to depurginated_numbers.txt");
-                    //Console.WriteLine("Press Enter key to exit.");
-                    //int input2 = Console.Read();
+                //Console.WriteLine("Unable to write to depurginated_numbers.txt");
+                //Console.WriteLine("Press Enter key to exit.");
+                //int input2 = Console.Read();
+
+                    ErrorLabel.Text = ex.ToString();
                 }
 
                 try
                 {
-                    using (StreamWriter outputFile = new StreamWriter(Server.MapPath("~/outfile/") + "depurginated_numbers.txt"))
+                using (StreamWriter outputFile = new StreamWriter(Server.MapPath(outFileReverse)))
+                {
+                    int x = 1;
+                    int y = 1;
+                    string outString = "";
+                    string oNumber = numberList[0].ToString();
+
+                    foreach (double line in reverseResultList)
                     {
-                        int x = 1;
-                        int y = 1;
-                        string outString = "";
-                        string oNumber = numberList[0].ToString();
-
-                        foreach (double line in reverseResultList)
+                        if (x % 5040 == 0 && y <= numberList.Count)
                         {
-                            if (x % 5040 == 0 && y <= numberList.Count)
-                            {
-                                oNumber = numberList[y - 1].ToString();
-                                y++;
-                            }
-
-                            if (x % 2 == 0)
-                            {
-                                outString += line.ToString();
-                                outputFile.WriteLine(outString);
-                            }
-                            else
-                            {
-                                outString = oNumber + "," + line.ToString() + ",";
-                            }
-                            x++;
+                            oNumber = numberList[y - 1].ToString();
+                            y++;
                         }
+
+                        if (x % 2 == 0)
+                        {
+                            outString += line.ToString();
+                            outputFile.WriteLine(outString);
+                        }
+                        else
+                        {
+                            outString = oNumber + "," + line.ToString() + ",";
+                        }
+                        x++;
                     }
+                }
                 }
                 catch (Exception)
                 {
@@ -236,7 +252,7 @@ namespace DepurginatorWeb
             //Console.WriteLine("Press Enter key to exit.");
             //int input5 = Console.Read();           
             LinkPanel.Visible = true;
-
+            //DataBind();
             //Server.Transfer("~/depurgeit.aspx", true);
             //Server.TransferRequest("~/depurgeit?showLinks=True");
             //Response.Redirect("~/depurgeit?showLinks=True");
