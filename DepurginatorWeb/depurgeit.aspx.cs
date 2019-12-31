@@ -1,48 +1,67 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Web;
 
 namespace DepurginatorWeb
 {
     public partial class depurgeit : System.Web.UI.Page
     {
-        string filename = "";
+        public string filename = "";
         public string dateTimeStamp = ""; 
         public string outFile = ""; 
         public string outFileReverse = "";
-        public string localTempDir = "";
         public string outFileLink = "";
         public string outFileLinkReverse = "";
-        public string home = ""; 
+        public string host = "";
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            string host = Request.Url.AbsoluteUri;
+            host = Request.Url.AbsoluteUri;
+            ErrorLabel.Text = "";
 
             if (Request.Params["showLinks"] != "True")
             {
-                //LinkPanel.Visible = true;
                 form1.Action = host + "?showLinks=True";
             }
             else
             {
                 form1.Action = host;
                 dateTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-                localTempDir = @"D:\home\site\wwwroot\outfile\"; //Server.MapPath("~/outfile/"); //Environment.GetEnvironmentVariable("TEMP"); //System.IO.Path.GetTempPath();
-                outFile =  "depurginated_numbers_" + dateTimeStamp + ".txt"; //@"D:\local\Temp\depurginated_numbers_" + dateTimeStamp + ".txt"; //"~/outfile/depurginated_numbers_" + dateTimeStamp + ".txt";
-                outFileReverse = "depurginated_numbers_reverse_" + dateTimeStamp + ".txt"; //@"D:\local\Temp\depurginated_numbers_reverse_" + dateTimeStamp + ".txt"; //"~/outfile/depurginated_numbers_reverse_" + dateTimeStamp + ".txt";
+                outFile =  "depurginated_numbers_" + dateTimeStamp + ".txt";
+                outFileReverse = "depurginated_numbers_reverse_" + dateTimeStamp + ".txt"; 
                 outFileLink = "outfile/" + outFile;
                 outFileLinkReverse = "outfile/" + outFileReverse;
-                LinkPanel.Visible = true;
+                LinkPanel.Visible = true;     
             }
-
-            //LinkPanel.Visible = true;
 
             DataBind();
         }
 
         protected void DepurginateIt_Click(object sender, EventArgs e)
         {
+            if (!Directory.Exists(Server.MapPath("~/infile/")))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Server.MapPath("~/infile/"));
+                }
+                catch (Exception ex)
+                {
+                    ErrorLabel.Text = "Could not create infile directory. The following error occured: " + ex.Message;
+                }
+            }
+
+            if(!Directory.Exists(Server.MapPath("~/outfile/")))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Server.MapPath("~/outfile/"));
+                }
+                catch (Exception ex)
+                {
+                    ErrorLabel.Text = "Could not create outfile directory. The following error occured: " + ex.Message;
+                }
+            }
 
             if (NumbersIn.HasFile)
             {
@@ -52,111 +71,116 @@ namespace DepurginatorWeb
                 try
                 {
                     NumbersIn.SaveAs(Server.MapPath("~/infile/") + filename);
-                    //StatusLabel.Text = "Upload status: File uploaded!";
                 }
                 catch (Exception ex)
                 {
-                    //StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+                    ErrorLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
                 }
             }
 
-                if (!File.Exists(Server.MapPath("~/infile/") + filename))     //".\\infile\\numbers_in.txt"))
+            if (!File.Exists(Server.MapPath("~/infile/") + filename))     
+            {
+                ViewState["error"] = "Could not find a numbers file to depurginate.";
+                ErrorLabel.Text = ViewState["error"].ToString();
+                ViewState["linksVisible"] = false;
+                LinkPanel.Visible = (bool)ViewState["linksVisible"];
+                return;
+            }
+
+            double result = 0;
+            double revResult = 0;
+            Permutator permutator = new Permutator();
+            int[] arr1 = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+
+            List<double> numberList = new List<double>();
+            List<double> permutedList = new List<double>();
+            List<double> resultList = new List<double>();
+            List<double> reverseResultList = new List<double>();
+
+            if (!ReadFile(numberList))
+            {
+                ViewState["error"] = "Error reading the numbers file. Check format.";
+                ErrorLabel.Text = ViewState["error"].ToString();
+                ViewState["linksVisible"] = false;                
+                LinkPanel.Visible = (bool)ViewState["linksVisible"];
+                return;
+            }
+
+            permutator.Permutate(arr1, 0, 6, permutedList);
+
+            foreach (double d in numberList)
+            {
+                int p = 0;
+                result = d;
+                revResult = d;
+
+                foreach (var number in permutedList)
                 {
-                   // Console.WriteLine("\nNo numbers_in.txt file found in current directory.\n\n" +
-                    //    "Press Enter key to exit.\n");
-                    //int input = Console.Read();
-                }
+                    p++;
+                    string num = number.ToString();
 
-                //Console.WriteLine("Depurginating numbers in numbers_in.txt...\n");
-
-                double result = 0;
-                double revResult = 0;
-                Permutator permutator = new Permutator();
-                int[] arr1 = new int[] { 1, 2, 3, 4, 5, 6, 7 };
-
-                List<double> numberList = new List<double>();
-                List<double> permutedList = new List<double>();
-                List<double> resultList = new List<double>();
-                List<double> reverseResultList = new List<double>();
-
-                if (!ReadFile(numberList))
-                    return;
-
-                permutator.Permutate(arr1, 0, 6, permutedList);
-
-                foreach (double d in numberList)
-                {
-                    int p = 0;
-                    result = d;
-                    revResult = d;
-
-                    foreach (var number in permutedList)
+                    foreach (char c in num)
                     {
-                        p++;
-                        string num = number.ToString();
-
-                        foreach (char c in num)
+                        switch (c)
                         {
-                            switch (c)
-                            {
-                                case '1':
-                                    result = result - 49;
-                                    revResult = revResult + 49;
-                                    break;
-                                case '2':
-                                    result = result - 49;
-                                    revResult = revResult + 49;
-                                    break;
-                                case '3':
-                                    result = result * .2;
-                                    revResult = revResult * 5;
-                                    break;
-                                case '4':
-                                    result = result - 35;
-                                    revResult = revResult + 35;
-                                    break;
-                                case '5':
-                                    result = result - 38;
-                                    revResult = revResult + 38;
-                                    break;
-                                case '6':
-                                    result = result / 6;
-                                    revResult = revResult * 6;
-                                    break;
-                                case '7':
-                                    result = result / 13;
-                                    revResult = revResult * 13;
-                                    break;
-                            }
-                        }
-
-                        if (p % 7 == 0)
-                        {
-                            double key = 0;
-                            string skey = "";
-
-                            for (int i = p - 7; i < p; i++)
-                            {
-                                skey += permutedList[i].ToString();
-                            }
-
-                            //if (!resultList.Exists(e => e.Equals(result)))
-                            //{
-                            key = double.Parse(skey);
-                            resultList.Add(key);
-                            resultList.Add(result);
-                            reverseResultList.Add(key);
-                            reverseResultList.Add(revResult);
-                            //}
-                            result = d;
-                            revResult = d;
+                            case '1':
+                                result = result - 49;
+                                revResult = revResult + 49;
+                                break;
+                            case '2':
+                                result = result - 49;
+                                revResult = revResult + 49;
+                                break;
+                            case '3':
+                                result = result * .2;
+                                revResult = revResult * 5;
+                                break;
+                            case '4':
+                                result = result - 35;
+                                revResult = revResult + 35;
+                                break;
+                            case '5':
+                                result = result - 38;
+                                revResult = revResult + 38;
+                                break;
+                            case '6':
+                                result = result / 6;
+                                revResult = revResult * 6;
+                                break;
+                            case '7':
+                                result = result / 13;
+                                revResult = revResult * 13;
+                                break;
                         }
                     }
-                }
 
-                try
-                {
-                using (StreamWriter outputFile = new StreamWriter(localTempDir + outFile))
+                    if (p % 7 == 0)
+                    {
+                        double key = 0;
+                        string skey = "";
+
+                        for (int i = p - 7; i < p; i++)
+                        {
+                            skey += permutedList[i].ToString();
+                        }
+
+                        //if (!resultList.Exists(e => e.Equals(result)))
+                        //{
+                        key = double.Parse(skey);
+                        resultList.Add(key);
+                        resultList.Add(result);
+                        reverseResultList.Add(key);
+                        reverseResultList.Add(revResult);
+                        //}
+                        result = d;
+                        revResult = d;
+                    }
+                }
+            }
+
+            try
+            {
+                using (StreamWriter outputFile = new StreamWriter(Server.MapPath("~/outfile/") + outFile))
                 {
                     int x = 1;
                     int y = 1;
@@ -183,19 +207,15 @@ namespace DepurginatorWeb
                         x++;
                     }
                 }
-                }
-                catch (Exception ex)
-                {
-                //Console.WriteLine("Unable to write to depurginated_numbers.txt");
-                //Console.WriteLine("Press Enter key to exit.");
-                //int input2 = Console.Read();
+            }
+            catch (Exception ex)
+            {
+                ErrorLabel.Text = "The following error occured: " + ex.Message;
+            }
 
-                    ErrorLabel.Text = ex.ToString();
-                }
-
-                try
-                {
-                using (StreamWriter outputFile = new StreamWriter(localTempDir + outFileReverse))
+            try
+            {
+                using (StreamWriter outputFile = new StreamWriter(Server.MapPath("~/outfile/") + outFileReverse))
                 {
                     int x = 1;
                     int y = 1;
@@ -222,25 +242,13 @@ namespace DepurginatorWeb
                         x++;
                     }
                 }
-                }
-                catch (Exception)
-                {
-                    //Console.WriteLine("Unable to write to reverse_depurginated_numbers.txt");
-                    //Console.WriteLine("Press Enter key to exit.");
-                    //int input2 = Console.Read();
-                }
-
-                
-
-            //System.Threading.Thread.Sleep(1500);
-            //Console.WriteLine("Numbers depurginated to depurginated_numbers.txt \nand reverse_depurginated_numbers.txt \n");
-            //Console.WriteLine("Press Enter key to exit.");
-            //int input5 = Console.Read();           
+            }
+            catch (Exception ex)
+            {
+                ErrorLabel.Text = "The following error occured: " + ex.Message;
+            }
+                        
             LinkPanel.Visible = true;
-            //DataBind();
-            //Server.Transfer("~/depurgeit.aspx", true);
-            //Server.TransferRequest("~/depurgeit?showLinks=True");
-            //Response.Redirect("~/depurgeit?showLinks=True");
         }
 
         public bool ReadFile(List<double> numberList)
@@ -249,7 +257,7 @@ namespace DepurginatorWeb
             string dir = System.IO.Directory.GetCurrentDirectory();
             try
             {
-                using (StreamReader reader = new StreamReader(Server.MapPath("~/infile/") + filename))    //dir + ".\\infile\\numbers_in.txt"))
+                using (StreamReader reader = new StreamReader(Server.MapPath("~/infile/") + filename))  
                 {
                     string line;
 
@@ -261,9 +269,6 @@ namespace DepurginatorWeb
             }
             catch (Exception)
             {
-                //Console.WriteLine("Unable to read numbers_in.txt");
-                //Console.WriteLine("Press Enter key to exit.");
-                //int input4 = Console.Read();
                 isGood = false;
             }
             return isGood;
@@ -290,12 +295,14 @@ namespace DepurginatorWeb
                 }
             }
             else
+            {
                 for (i = k; i <= m; i++)
                 {
                     Swap(ref list[k], ref list[i]);
                     Permutate(list, k + 1, m, numList);
                     Swap(ref list[k], ref list[i]);
                 }
+            }
         }
     }
 }

@@ -8,8 +8,9 @@
 </head>
 <body style="height: 311px">
     <form id="form1" runat="server">
-        <asp:Label ID="InFile" runat="server" Text="Numbers File"></asp:Label>
-        :<p>
+        <asp:Label ID="InFile" runat="server" Text="Numbers File - "></asp:Label>
+        Select a .txt file that has the list of numbers (each on its own line) you want depurginated.<br />
+        <p>
             <asp:FileUpload ID="NumbersIn" runat="server" style="margin-right: 612px" Width="594px" />
         </p>
         <p>
@@ -23,6 +24,9 @@
             <br />
             <br />
             <asp:HyperLink ID="NumbersFileRev" runat="server" NavigateUrl="<%# outFileLinkReverse %>">DePurge Numbers Reversed</asp:HyperLink>
+            <br />
+            <br />
+            Second column of results file shows order of operations: 1 and 2 = subtract 49, 3 = multiply by .2, 4 = subtract 35, 5 = subtract 38, 6 = divide by 6, 7 = divide by 13
         </asp:Panel>
     </form>
 </body>
