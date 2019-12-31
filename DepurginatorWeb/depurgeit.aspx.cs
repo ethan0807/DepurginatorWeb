@@ -8,9 +8,13 @@ namespace DepurginatorWeb
     public partial class depurgeit : System.Web.UI.Page
     {
         string filename = "";
-        public string dateTimeStamp = ""; // DateTime.Now.ToString("yyyyMMddHHmmss");
-        public string outFile = ""; //"../outfile/depurginated_numbers_" + dateTimeStamp + ".txt";
-        public string outFileReverse = ""; // "../outfile/depurginated_numbers_reverse_" + dateTimeStamp + ".txt";
+        public string dateTimeStamp = ""; 
+        public string outFile = ""; 
+        public string outFileReverse = "";
+        public string localTempDir = "";
+        public string outFileLink = "";
+        public string outFileLinkReverse = "";
+        public string home = ""; 
         protected void Page_Load(object sender, EventArgs e)
         {
             string host = Request.Url.AbsoluteUri;
@@ -19,15 +23,20 @@ namespace DepurginatorWeb
             {
                 //LinkPanel.Visible = true;
                 form1.Action = host + "?showLinks=True";
-
             }
             else
             {
                 form1.Action = host;
                 dateTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-                outFile = "~/outfile/depurginated_numbers_" + dateTimeStamp + ".txt";
-                outFileReverse = "~/outfile/depurginated_numbers_reverse_" + dateTimeStamp + ".txt";
+                localTempDir = @"D:\home\site\wwwroot\outfile\"; //Server.MapPath("~/outfile/"); //Environment.GetEnvironmentVariable("TEMP"); //System.IO.Path.GetTempPath();
+                outFile =  "depurginated_numbers_" + dateTimeStamp + ".txt"; //@"D:\local\Temp\depurginated_numbers_" + dateTimeStamp + ".txt"; //"~/outfile/depurginated_numbers_" + dateTimeStamp + ".txt";
+                outFileReverse = "depurginated_numbers_reverse_" + dateTimeStamp + ".txt"; //@"D:\local\Temp\depurginated_numbers_reverse_" + dateTimeStamp + ".txt"; //"~/outfile/depurginated_numbers_reverse_" + dateTimeStamp + ".txt";
+                outFileLink = "outfile/" + outFile;
+                outFileLinkReverse = "outfile/" + outFileReverse;
+                LinkPanel.Visible = true;
             }
+
+            //LinkPanel.Visible = true;
 
             DataBind();
         }
@@ -147,7 +156,7 @@ namespace DepurginatorWeb
 
                 try
                 {
-                using (StreamWriter outputFile = new StreamWriter(Server.MapPath(outFile)))
+                using (StreamWriter outputFile = new StreamWriter(localTempDir + outFile))
                 {
                     int x = 1;
                     int y = 1;
@@ -186,7 +195,7 @@ namespace DepurginatorWeb
 
                 try
                 {
-                using (StreamWriter outputFile = new StreamWriter(Server.MapPath(outFileReverse)))
+                using (StreamWriter outputFile = new StreamWriter(localTempDir + outFileReverse))
                 {
                     int x = 1;
                     int y = 1;

@@ -10,7 +10,7 @@
     <form id="form1" runat="server">
         <asp:Label ID="InFile" runat="server" Text="Numbers File"></asp:Label>
         :<p>
-            <asp:FileUpload ID="NumbersIn" runat="server" style="margin-right: 612px" Width="331px" />
+            <asp:FileUpload ID="NumbersIn" runat="server" style="margin-right: 612px" Width="594px" />
         </p>
         <p>
             <asp:Label ID="ErrorLabel" runat="server"></asp:Label>
@@ -19,10 +19,10 @@
         <br />
         <br />
         <asp:Panel ID="LinkPanel" runat="server" Height="106px" Visible="False">
-            <asp:HyperLink ID="NumbersFile" runat="server" NavigateUrl="<%# outFile %>">DePurge Numbers</asp:HyperLink>
+            <asp:HyperLink ID="NumbersFile" runat="server" NavigateUrl="<%# outFileLink %>">DePurge Numbers</asp:HyperLink>
             <br />
             <br />
-            <asp:HyperLink ID="NumbersFileRev" runat="server" NavigateUrl="<%# outFileReverse %>">DePurge Numbers Reversed</asp:HyperLink>
+            <asp:HyperLink ID="NumbersFileRev" runat="server" NavigateUrl="<%# outFileLinkReverse %>">DePurge Numbers Reversed</asp:HyperLink>
         </asp:Panel>
     </form>
 </body>
